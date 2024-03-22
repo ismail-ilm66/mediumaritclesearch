@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+</head>
+
+<body>
+    <h1>Search Page</h1>
+    <form id="searchForm">
+        <input type="text" id="query" name="query" placeholder="Enter search query">
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="searchResults"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form submission
+            const query = document.getElementById('query').value;
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        const resultsDiv = document.getElementById('searchResults');
+                        resultsDiv.innerHTML = ''; // Clear previous results
+                        data.forEach(item => {
+                            const resultItem = document.createElement('div');
+                            resultItem.textContent = item.Title; // Display title for each result
+                            resultsDiv.appendChild(resultItem);
+                        });
+                    } else {
+                        console.error('Error:', xhr.statusText);
+                    }
+                }
+            };
+            xhr.open('GET', '/search?query=' + encodeURIComponent(query), true);
+            xhr.send();
+        });
+    </script>
+</body>
+
+</html>
